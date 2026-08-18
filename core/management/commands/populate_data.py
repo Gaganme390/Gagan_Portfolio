@@ -264,7 +264,7 @@ class Command(BaseCommand):
             ),
             accent_color="#6C63FF",
             is_featured=True,
-            order=0,
+            order=1,
         )
 
         Project.objects.create(
@@ -322,7 +322,7 @@ class Command(BaseCommand):
             ),
             accent_color="#00C9A7",
             is_featured=True,
-            order=1,
+            order=2,
         )
 
         Project.objects.create(
@@ -378,7 +378,7 @@ class Command(BaseCommand):
             ),
             accent_color="#FF6B6B",
             is_featured=True,
-            order=2,
+            order=3,
         )
 
         Project.objects.create(
@@ -429,7 +429,7 @@ class Command(BaseCommand):
             ),
             accent_color="#4ECDC4",
             is_featured=True,
-            order=3,
+            order=4,
         )
 
         Project.objects.create(
@@ -479,7 +479,7 @@ class Command(BaseCommand):
             ),
             accent_color="#FFD93D",
             is_featured=True,
-            order=4,
+            order=5,
         )
         Project.objects.create(
             title="G.D. Goenka School, Ayodhya",
