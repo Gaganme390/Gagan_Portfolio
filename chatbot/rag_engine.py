@@ -1,12 +1,12 @@
 """
 RAG Engine for the Portfolio AI Assistant.
-Uses TF-IDF based retrieval to find relevant portfolio content
-and constructs context-aware responses without requiring external API keys.
+Uses rule-based semantic intent matching combined with TF-IDF retrieval
+to provide accurate, contextual, and formatted answers about Gagan Sahu's portfolio.
 """
 import re
 import math
 from collections import Counter
-from core.models import Profile, Skill, Experience, Project, Certification, Education
+from core.models import Profile, Skill, Experience, Project, Certification, Education, SocialLink
 
 
 class PortfolioRAG:
@@ -28,12 +28,12 @@ class PortfolioRAG:
         profile = Profile.objects.first()
         if profile:
             self._add_doc(
-                f"About Gagan Sahu: {profile.professional_summary} {profile.about_me}",
+                f"About Gagan Sahu bio summary profile background: {profile.professional_summary} {profile.about_me}",
                 "profile"
             )
             self._add_doc(
-                f"Contact information: Email is {profile.email}. "
-                f"Phone is {profile.phone}. LinkedIn is {profile.linkedin}. "
+                f"Contact info email phone linkedin github location address: Email is {profile.email}. "
+                f"Phone is {profile.phone}. LinkedIn is {profile.linkedin}. GitHub is {profile.github}. "
                 f"Location is {profile.location}.",
                 "contact"
             )
@@ -46,7 +46,7 @@ class PortfolioRAG:
                 skills_by_cat[cat] = []
             skills_by_cat[cat].append(skill.name)
         if skills_by_cat:
-            skills_text = "Technical skills and technologies: "
+            skills_text = "Technical skills and technologies programming languages frameworks tools: "
             for cat, names in skills_by_cat.items():
                 skills_text += f"{cat}: {', '.join(names)}. "
             self._add_doc(skills_text, "skills")
@@ -56,7 +56,7 @@ class PortfolioRAG:
             resp_text = ' '.join(exp.responsibilities) if exp.responsibilities else ''
             tech_text = ', '.join(exp.technologies) if exp.technologies else ''
             self._add_doc(
-                f"Work experience: {exp.title} at {exp.company} in {exp.location}. "
+                f"Work experience employment job role company: {exp.title} at {exp.company} in {exp.location}. "
                 f"Duration: {exp.duration_display()}. {exp.description} "
                 f"Responsibilities: {resp_text} Technologies: {tech_text}",
                 f"experience_{exp.id}"
@@ -68,7 +68,7 @@ class PortfolioRAG:
             challenges_text = ' '.join(project.challenges) if project.challenges else ''
             tech_text = ', '.join(project.technologies) if project.technologies else ''
             self._add_doc(
-                f"Project: {project.title}. {project.tagline}. Role: {project.role}. "
+                f"Project portfolio application software: {project.title}. {project.tagline}. Role: {project.role}. "
                 f"Overview: {project.overview} "
                 f"Problem: {project.problem_statement} "
                 f"Features: {features_text} "
@@ -85,7 +85,7 @@ class PortfolioRAG:
             cert_texts.append(f"{cert.name} by {cert.issuer}: {cert.description}")
         if cert_texts:
             self._add_doc(
-                "Certifications and awards: " + " ".join(cert_texts),
+                "Certifications awards credentials licenses ServiceNow Coursera: " + " ".join(cert_texts),
                 "certifications"
             )
 
@@ -98,7 +98,7 @@ class PortfolioRAG:
             )
         if edu_texts:
             self._add_doc(
-                "Education background: " + " ".join(edu_texts),
+                "Education background degree college university qualification school academics: " + " ".join(edu_texts),
                 "education"
             )
 
@@ -159,50 +159,267 @@ class PortfolioRAG:
         return results
 
     def generate_response(self, query):
-        """Generate a response using retrieved context."""
-        query_lower = query.lower().strip()
+        """Generate an accurate response based on query intent & semantic context."""
+        q = query.lower().strip()
 
-        # Handle special commands
-        if any(kw in query_lower for kw in ['download resume', 'download cv', 'get resume']):
-            return {
-                'text': "You can download Gagan's resume by clicking the button below!",
-                'action': 'download_resume',
-                'action_url': '/download-resume/'
-            }
-
-        if any(kw in query_lower for kw in ['contact', 'reach', 'email', 'hire']):
-            profile = Profile.objects.first()
-            if profile:
-                return {
-                    'text': (
-                        f"You can reach Gagan through:\n\n"
-                        f"📧 **Email:** {profile.email}\n"
-                        f"🔗 **LinkedIn:** {profile.linkedin}\n"
-                        f"📱 **Phone:** {profile.phone}\n\n"
-                        f"Or use the contact form at the bottom of this page!"
-                    ),
-                    'action': None
-                }
-
-        # Retrieve relevant context
-        results = self.retrieve(query, top_k=3)
-
-        if not results:
+        # 1. Greetings & Meta
+        if q in ['hi', 'hello', 'hey', 'greetings', 'hola', 'namaste']:
             return {
                 'text': (
-                    "I don't have specific information about that. "
-                    "Try asking about Gagan's projects, skills, experience, "
-                    "certifications, or education!"
+                    "👋 Hello! I'm Gagan's AI Portfolio Assistant.\n\n"
+                    "Feel free to ask me anything about:\n"
+                    "• **Projects** he has built\n"
+                    "• **Skills** & technologies (React, Django, Python, MERN, AWS, ServiceNow)\n"
+                    "• **Work Experience** at i-Connectresources\n"
+                    "• **Certifications** & Education\n"
+                    "• **Contact details** or **Resume download**!"
                 ),
                 'action': None
             }
 
-        # Build response from context
-        response = self._format_response(query_lower, results)
-        return {'text': response, 'action': None}
+        # 2. Resume / CV Intent
+        if any(kw in q for kw in ['resume', 'cv', 'curriculum vitae', 'download resume', 'get resume']):
+            return {
+                'text': (
+                    "📄 You can view and download Gagan's complete resume in PDF format below:"
+                ),
+                'action': 'download_resume',
+                'action_url': '/download-resume/'
+            }
 
-    def _format_response(self, query, results):
-        """Format a natural response from retrieved documents."""
+        # 3. Contact / Social Links Intent
+        if any(kw in q for kw in ['contact', 'email', 'phone', 'call', 'number', 'reach', 'hire', 'linkedin', 'github', 'social', 'address', 'location', 'where is he']):
+            profile = Profile.objects.first()
+            if profile:
+                response = f"📫 **Get in Touch with Gagan Sahu:**\n\n"
+                if profile.email:
+                    response += f"📧 **Email:** [{profile.email}](mailto:{profile.email})\n"
+                if profile.linkedin:
+                    response += f"💼 **LinkedIn:** [{profile.linkedin}]({profile.linkedin})\n"
+                if profile.github:
+                    response += f"💻 **GitHub:** [{profile.github}]({profile.github})\n"
+                if profile.phone:
+                    response += f"📱 **Phone:** {profile.phone}\n"
+                if profile.location:
+                    response += f"📍 **Location:** {profile.location}\n"
+                response += "\nYou can also leave a direct message using the **Contact Form** below on the website!"
+                return {'text': response, 'action': None}
+
+        # 4. Specific Project Match
+        projects = Project.objects.all()
+        for p in projects:
+            title_lower = p.title.lower()
+            slug_lower = p.slug.lower()
+            # Match project name or keywords
+            match_keywords = [title_lower, slug_lower]
+            if 'sparkle' in title_lower or 'goenka' in title_lower:
+                match_keywords.extend(['sparkle', 'goenka', 'ayodhya'])
+            if 'verity' in title_lower:
+                match_keywords.append('verity')
+            if 'learning' in title_lower:
+                match_keywords.extend(['learningoutcome', 'outcomeos'])
+            if 'auction' in title_lower:
+                match_keywords.extend(['auction', 'bidding'])
+            if 'oncology' in title_lower or 'cancer' in title_lower:
+                match_keywords.extend(['oncology', 'cancer', 'healthcare'])
+            if 'hr' in title_lower or 'management' in title_lower:
+                match_keywords.extend(['hr management', 'human resource', 'intelligent hr'])
+
+            if any(kw in q for kw in match_keywords if len(kw) > 2):
+                return {'text': self._format_single_project(p), 'action': None}
+
+        # 5. General Projects List Intent
+        if any(kw in q for kw in ['project', 'projects', 'what has he built', 'what did he build', 'what did he make', 'built', 'created', 'portfolio works', 'applications', 'work done']):
+            return {'text': self._format_all_projects(), 'action': None}
+
+        # 6. Skills & Tech Stack Intent
+        if any(kw in q for kw in ['skill', 'skills', 'technology', 'technologies', 'tech stack', 'languages', 'tools', 'frameworks', 'know', 'frontend', 'backend', 'database', 'cloud', 'devops', 'servicenow']):
+            return {'text': self._format_skills_response(q), 'action': None}
+
+        # 7. Experience / Work History Intent
+        if any(kw in q for kw in ['experience', 'work', 'working', 'job', 'company', 'companies', 'intern', 'internship', 'career', 'i-connectresources', 'current role']):
+            return {'text': self._format_experience_response(q), 'action': None}
+
+        # 8. Certifications Intent
+        if any(kw in q for kw in ['certification', 'certifications', 'certificate', 'certificates', 'certified', 'award', 'credential', 'license']):
+            return {'text': self._format_certifications_response(), 'action': None}
+
+        # 9. Education Intent
+        if any(kw in q for kw in ['education', 'degree', 'college', 'university', 'school', 'academics', 'qualification', 'study', 'studied', 'microbiology', 'pgdca', 'rungta']):
+            return {'text': self._format_education_response(), 'action': None}
+
+        # 10. About / Bio Intent
+        if any(kw in q for kw in ['who is', 'about', 'bio', 'background', 'summary', 'profile', 'introduce', 'overview', 'gagan sahu']):
+            return {'text': self._format_profile_response(q), 'action': None}
+
+        # 11. Fallback: RAG TF-IDF Retrieval
+        results = self.retrieve(q, top_k=3)
+        if not results or results[0]['score'] == 0:
+            return {
+                'text': (
+                    "I'm not completely sure about that. Try asking about:\n"
+                    "• **Projects** (e.g., *'Tell me about VerityAI'* or *'What projects has he worked on?'*)\n"
+                    "• **Skills** (e.g., *'What backend technologies does he use?'*)\n"
+                    "• **Experience** (e.g., *'Where does he work?'*)\n"
+                    "• **Certifications** or **Education**"
+                ),
+                'action': None
+            }
+
+        response_text = self._format_retrieved_response(q, results)
+        return {'text': response_text, 'action': None}
+
+    def _format_all_projects(self):
+        projects = Project.objects.all()
+        if not projects.exists():
+            return "No projects found in the portfolio."
+
+        response = f"🚀 **Gagan has worked on {projects.count()} major projects:**\n\n"
+        for p in projects:
+            tech_str = ', '.join(p.technologies[:5]) if p.technologies else 'Various'
+            response += f"### 🔹 **{p.title}**\n"
+            if p.tagline:
+                response += f"*{p.tagline}*\n"
+            response += f"• **Overview:** {p.overview[:160]}...\n"
+            response += f"• **Tech Stack:** `{tech_str}`\n"
+            
+            links = []
+            if p.demo_link:
+                links.append(f"[🌐 Live Demo]({p.demo_link})")
+            if p.github_link:
+                links.append(f"[💻 GitHub]({p.github_link})")
+            links.append(f"[📄 Case Study](/project/{p.slug}/)")
+            response += f"• **Links:** {' | '.join(links)}\n\n"
+
+        response += "💡 *Tip: Ask me about any specific project (e.g., 'Tell me more about VerityAI' or 'Sparkle World Studio') for a deeper dive!*"
+        return response
+
+    def _format_single_project(self, project):
+        tech_text = ', '.join(project.technologies) if project.technologies else 'N/A'
+        response = (
+            f"## 🚀 {project.title}\n"
+            f"**{project.tagline}**\n\n"
+            f"• **Role:** {project.role or 'Full Stack Developer'}\n"
+            f"• **Technologies:** `{tech_text}`\n\n"
+            f"### 📋 Overview\n{project.overview}\n\n"
+        )
+        if project.features:
+            response += "### ✨ Key Features\n"
+            for f in project.features[:5]:
+                response += f"- {f}\n"
+            response += "\n"
+
+        if project.challenges:
+            response += "### ⚡ Challenges & Solutions\n"
+            for c in project.challenges[:3]:
+                response += f"- {c}\n"
+            response += "\n"
+
+        links = []
+        if project.demo_link:
+            links.append(f"[🌐 Live Demo]({project.demo_link})")
+        if project.github_link:
+            links.append(f"[💻 GitHub Repository]({project.github_link})")
+        links.append(f"[📄 Full Case Study](/project/{project.slug}/)")
+        response += f"🔗 **Links:** {' | '.join(links)}"
+        return response
+
+    def _format_profile_response(self, query):
+        profile = Profile.objects.first()
+        if not profile:
+            return "Profile information is not available."
+
+        return (
+            f"👨‍💻 **Gagan Sahu** — {profile.title}\n"
+            f"📍 Based in {profile.location}\n\n"
+            f"{profile.professional_summary}\n\n"
+            f"📊 **Quick Highlights:**\n"
+            f"• **Experience:** {profile.years_experience}+ years in Full-Stack & MERN development\n"
+            f"• **Projects Completed:** {profile.projects_completed} production-grade applications\n"
+            f"• **Certifications:** {profile.certifications_count} professional credentials (ServiceNow, Python)\n\n"
+            f"Feel free to ask about his **skills**, **projects**, or **experience**!"
+        )
+
+    def _format_skills_response(self, query):
+        skills_by_cat = {}
+        all_skills = []
+        for skill in Skill.objects.filter(is_featured=True):
+            cat = skill.get_category_display()
+            if cat not in skills_by_cat:
+                skills_by_cat[cat] = []
+            skills_by_cat[cat].append(skill.name)
+            all_skills.append(skill.name)
+
+        # Check if query asks about a specific skill
+        for skill_name in all_skills:
+            if skill_name.lower() in query:
+                projects_matching = [
+                    p.title for p in Project.objects.all()
+                    if p.technologies and any(skill_name.lower() in t.lower() for t in p.technologies)
+                ]
+                reply = f"✅ **Yes! Gagan is proficient in {skill_name}.**\n\n"
+                if projects_matching:
+                    reply += f"He has used **{skill_name}** in the following projects:\n"
+                    for p in projects_matching:
+                        reply += f"• **{p}**\n"
+                return reply
+
+        # Otherwise, output all categorized skills
+        response = "🛠️ **Gagan's Technical & Professional Skills:**\n\n"
+        for cat, skills in skills_by_cat.items():
+            response += f"• **{cat}:** {', '.join(skills)}\n"
+        return response
+
+    def _format_experience_response(self, query):
+        experiences = Experience.objects.all()
+        if not experiences.exists():
+            return "Experience information is not available."
+
+        response = "💼 **Gagan's Professional Experience:**\n\n"
+        for exp in experiences:
+            tech_text = ', '.join(exp.technologies) if exp.technologies else ''
+            status = "(Current Role)" if exp.is_current else ""
+            response += (
+                f"### 🏢 **{exp.title}** {status}\n"
+                f"**{exp.company}** | 📅 {exp.duration_display()} | 📍 {exp.location}\n\n"
+                f"{exp.description}\n\n"
+            )
+            if exp.responsibilities:
+                response += "**Key Responsibilities & Contributions:**\n"
+                for r in exp.responsibilities[:4]:
+                    response += f"• {r}\n"
+                response += "\n"
+
+            if tech_text:
+                response += f"**Technologies:** `{tech_text}`\n\n---\n\n"
+        return response
+
+    def _format_certifications_response(self):
+        certs = Certification.objects.all()
+        if not certs.exists():
+            return "Certification information is not available."
+
+        response = f"🏆 **Gagan holds {certs.count()} Professional Certifications:**\n\n"
+        for cert in certs:
+            response += f"• **{cert.name}** — *{cert.issuer}*\n"
+            if cert.description:
+                response += f"  _{cert.description}_\n"
+        return response
+
+    def _format_education_response(self):
+        edus = Education.objects.all()
+        if not edus.exists():
+            return "Education information is not available."
+
+        response = "🎓 **Educational Background:**\n\n"
+        for edu in edus:
+            response += (
+                f"• **{edu.degree}** ({edu.field})\n"
+                f"  🏛️ {edu.institution} | 📅 Graduated {edu.graduation_year} | 📊 Score: {edu.gpa}\n\n"
+            )
+        return response
+
+    def _format_retrieved_response(self, query, results):
         primary = results[0]
         label = primary['label']
 
@@ -212,7 +429,11 @@ class PortfolioRAG:
             return self._format_skills_response(query)
         elif label.startswith('project_'):
             slug = label.replace('project_', '')
-            return self._format_project_response(slug)
+            try:
+                p = Project.objects.get(slug=slug)
+                return self._format_single_project(p)
+            except Project.DoesNotExist:
+                pass
         elif label.startswith('experience_'):
             return self._format_experience_response(query)
         elif label == 'certifications':
@@ -220,106 +441,9 @@ class PortfolioRAG:
         elif label == 'education':
             return self._format_education_response()
         elif label == 'contact':
-            profile = Profile.objects.first()
-            if profile:
-                return (
-                    f"📧 **Email:** {profile.email}\n"
-                    f"🔗 **LinkedIn:** {profile.linkedin}\n"
-                    f"📱 **Phone:** {profile.phone}\n"
-                    f"📍 **Location:** {profile.location}"
-                )
+            return self._format_profile_response(query)
 
-        # Fallback: return relevant excerpt
-        return primary['text'][:500] + "..."
-
-    def _format_profile_response(self, query):
-        profile = Profile.objects.first()
-        if not profile:
-            return "Profile information is not available."
-        if any(kw in query for kw in ['who is', 'tell me about', 'about']):
-            return (
-                f"**{profile.full_name}** is a {profile.title} based in {profile.location}.\n\n"
-                f"{profile.professional_summary}\n\n"
-                f"With **{profile.years_experience}+ years** of experience, "
-                f"**{profile.projects_completed} projects** completed, and "
-                f"**{profile.certifications_count} certifications** earned, "
-                f"Gagan brings a unique blend of technical depth and practical expertise."
-            )
-        return profile.professional_summary
-
-    def _format_skills_response(self, query):
-        skills_by_cat = {}
-        for skill in Skill.objects.filter(is_featured=True):
-            cat = skill.get_category_display()
-            if cat not in skills_by_cat:
-                skills_by_cat[cat] = []
-            skills_by_cat[cat].append(skill.name)
-
-        # Check if asking about specific technology
-        for cat, skills in skills_by_cat.items():
-            for skill in skills:
-                if skill.lower() in query:
-                    projects = Project.objects.filter(
-                        technologies__contains=[skill]
-                    )
-                    proj_names = [p.title for p in projects] if projects else []
-                    response = f"Yes! Gagan is proficient in **{skill}** ({cat})."
-                    if proj_names:
-                        response += f"\n\nProjects using {skill}: {', '.join(proj_names)}"
-                    return response
-
-        response = "Here are Gagan's technical skills:\n\n"
-        for cat, skills in skills_by_cat.items():
-            response += f"**{cat}:** {', '.join(skills)}\n"
-        return response
-
-    def _format_project_response(self, slug):
-        try:
-            project = Project.objects.get(slug=slug)
-        except Project.DoesNotExist:
-            return "Project details are not available."
-
-        tech_text = ', '.join(project.technologies) if project.technologies else 'N/A'
-        response = (
-            f"## {project.title}\n"
-            f"*{project.tagline}*\n\n"
-            f"**Role:** {project.role}\n\n"
-            f"{project.overview}\n\n"
-            f"**Technologies:** {tech_text}\n\n"
-        )
-        if project.lessons_learned:
-            response += f"**Key Takeaways:** {project.lessons_learned[:200]}..."
-        return response
-
-    def _format_experience_response(self, query):
-        experiences = Experience.objects.all()
-        response = "Here's Gagan's professional experience:\n\n"
-        for exp in experiences:
-            tech_text = ', '.join(exp.technologies) if exp.technologies else ''
-            response += (
-                f"### {exp.title} at {exp.company}\n"
-                f"📅 {exp.duration_display()} | 📍 {exp.location}\n\n"
-                f"{exp.description}\n\n"
-                f"**Tech Stack:** {tech_text}\n\n---\n\n"
-            )
-        return response
-
-    def _format_certifications_response(self):
-        certs = Certification.objects.all()
-        response = "Here are Gagan's certifications:\n\n"
-        for cert in certs:
-            response += f"🏆 **{cert.name}** — {cert.issuer}\n"
-        return response
-
-    def _format_education_response(self):
-        edus = Education.objects.all()
-        response = "Here's Gagan's educational background:\n\n"
-        for edu in edus:
-            response += (
-                f"🎓 **{edu.degree}**\n"
-                f"   {edu.institution} — {edu.graduation_year} | GPA: {edu.gpa}\n\n"
-            )
-        return response
+        return self._format_profile_response(query)
 
 
 # Singleton instance
