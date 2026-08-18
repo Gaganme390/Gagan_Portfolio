@@ -482,49 +482,54 @@ class Command(BaseCommand):
             order=4,
         )
         Project.objects.create(
-            title="Sparkle World Studio",
-            slug="sparkle-world-studio",
-            tagline="Interactive Web Experience & Modern Digital Studio Platform",
-            role="Frontend & Creative Developer",
+            title="G.D. Goenka School, Ayodhya",
+            slug="gd-goenka-school-ayodhya",
+            tagline="Where Heritage Inspires the Future — Premium CBSE Educational Platform & Campus",
+            role="Lead Frontend & Creative UI/UX Developer",
             overview=(
-                "Sparkle World Studio is an interactive web experience crafted for GD Goenka Ayodhya. "
-                "The project features high-performance smooth animations, interactive UI components, "
-                "and modern responsive design built using React, Vite, Framer Motion, and GSAP."
+                "The official digital web experience for G.D. Goenka Public School Ayodhya. "
+                "Architected as a flagship educational platform blending heritage-inspired editorial "
+                "design with futuristic interactive web technology. Built with React, Vite, Framer Motion, "
+                "and GSAP, the platform features fluid scroll-driven animations, magnetic interactions, "
+                "an interactive curriculum explorer, admissions workflows, and comprehensive school leadership showcases."
             ),
             problem_statement=(
-                "Modern institutions and creative studios need digital experiences that captivate visitors, "
-                "convey institutional excellence, and deliver fluid performance across all screen sizes "
-                "without compromising load times."
+                "Top-tier educational institutions need digital platforms that reflect world-class standards, "
+                "convey institutional heritage, and engage prospective parents and students with smooth, interactive "
+                "storytelling without sacrificing performance, SEO rankings, or mobile responsiveness."
             ),
             features=[
-                "Interactive animated sections powered by GSAP and Framer Motion",
-                "Lightning-fast client-side build and bundle optimization with Vite",
-                "Responsive component architecture with pixel-perfect layouts",
-                "Modern design aesthetic with smooth transitions and micro-interactions",
-                "Continuous deployment pipeline hosted on Render"
+                "Smooth scroll-triggered timeline animations and parallax sections powered by GSAP",
+                "Magnetic buttons, cursor micro-interactions, and fluid transitions using Framer Motion",
+                "Admissions 2026-27 interactive inquiry portal and step-by-step application workflow",
+                "Dedicated modules for CBSE Academics, STEM Innovation Labs, and Goenkan Leadership Academy",
+                "Mobile-first responsive architecture with custom typography (DM Serif Display & Manrope)",
+                "Sub-second page load times with Vite bundle optimization and Rolldown chunking",
+                "Full SEO optimization with structured JSON-LD Schema markup for Google search visibility"
             ],
             challenges=[
-                "Synchronizing complex GSAP timeline animations with React lifecycle components",
-                "Ensuring high frame rates (60fps) during heavy visual transitions across mobile devices",
-                "Structuring modular UI components for maintainability and scalability"
+                "Orchestrating multi-layered GSAP timeline animations alongside React component lifecycle for seamless 60fps rendering",
+                "Ensuring high accessibility and readability across diverse screen sizes while maintaining sophisticated luxury design typography",
+                "Optimizing dynamic visual assets and font loading to achieve near-perfect Core Web Vitals scores on Render"
             ],
             technologies=[
-                "React.js", "Vite", "Framer Motion", "GSAP", "JavaScript",
-                "CSS3", "HTML5", "Render"
+                "React 18", "Vite", "Framer Motion", "GSAP", "JavaScript (ES6+)",
+                "Tailwind CSS", "Lucide Icons", "Rolldown", "HTML5", "Render"
             ],
             architecture=(
-                "Built on Vite and React with component-level animation hooks. Leverages Framer Motion "
-                "for declarative layout animations and GSAP for scroll-triggered timeline sequences."
+                "Constructed on a Vite-powered React Single-Page Application (SPA) architecture with modular component "
+                "hierarchy. Employs Framer Motion for declarative UI state animations and GSAP ScrollTrigger for viewport "
+                "timeline sequences, optimized with modern code-splitting and automated CI/CD on Render."
             ),
             lessons_learned=(
-                "Deepened expertise in combining imperative animation libraries like GSAP with declarative "
-                "React component trees, optimizing rendering performance, and managing responsive animation breakpoints."
+                "Mastered combining advanced imperative animation libraries with React state management, designing "
+                "high-conversion institutional landing experiences, and fine-tuning Core Web Vitals for maximum performance."
             ),
             github_link="https://github.com/Gaganme390/Sparkle-World-Studio",
             demo_link="https://gd-goenka-ayodhya.onrender.com/",
-            accent_color="#FF6B6B",
+            accent_color="#E5A93B",
             is_featured=True,
-            order=5,
+            order=0,
         )
         self.stdout.write(self.style.SUCCESS('  [OK] 6 projects created'))
 
