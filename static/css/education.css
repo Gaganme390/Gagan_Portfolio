@@ -1,0 +1,118 @@
+/* =====================================================
+   EDUCATION SECTION
+   ===================================================== */
+
+.education-timeline {
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.education-timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 24px;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(to bottom,
+        var(--accent-primary),
+        var(--accent-tertiary),
+        transparent
+    );
+}
+
+.edu-item {
+    position: relative;
+    padding-left: 70px;
+    padding-bottom: 48px;
+}
+
+.edu-item:last-child {
+    padding-bottom: 0;
+}
+
+.edu-dot {
+    position: absolute;
+    left: 15px;
+    top: 4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--bg-primary);
+    border: 3px solid var(--accent-primary);
+    z-index: 2;
+    transition: all var(--transition-base);
+}
+
+.edu-item:hover .edu-dot {
+    background: var(--accent-primary);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+    transform: scale(1.2);
+}
+
+.edu-card {
+    background: var(--bg-glass);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    transition: all var(--transition-base);
+}
+
+.edu-card:hover {
+    border-color: var(--border-accent);
+    box-shadow: var(--shadow-glow);
+    transform: translateX(8px);
+}
+
+.edu-year {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent-secondary);
+    margin-bottom: 10px;
+    padding: 4px 12px;
+    background: rgba(99, 102, 241, 0.08);
+    border-radius: var(--radius-full);
+}
+
+.edu-degree {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.edu-institution {
+    font-size: 0.95rem;
+    color: var(--accent-secondary);
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.edu-gpa {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    padding: 4px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-subtle);
+}
+
+.edu-description {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-top: 12px;
+    line-height: 1.6;
+}
+
+@media (max-width: 480px) {
+    .edu-item {
+        padding-left: 55px;
+    }
+}

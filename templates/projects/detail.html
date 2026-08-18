@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ project.title }} — Gagan Sahu Portfolio{% endblock %}
+{% block meta_description %}{{ project.tagline }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/project-detail.css' %}">
+<link rel="stylesheet" href="{% static 'css/projects.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Project Hero -->
+<section class="project-hero" style="background: linear-gradient(135deg, {{ project.accent_color }}15, var(--bg-primary));">
+    <div class="project-hero-content">
+        <a href="{% url 'core:index' %}#projects" class="project-hero-back">
+            ← Back to Projects
+        </a>
+
+        <h1 class="project-hero-title">{{ project.title }}</h1>
+        <p class="project-hero-tagline">{{ project.tagline }}</p>
+
+        <div class="project-hero-meta">
+            <span class="project-meta-item">👤 {{ project.role }}</span>
+            {% if project.github_link %}
+            <a href="{{ project.github_link }}" target="_blank" rel="noopener" class="project-meta-item" style="text-decoration:none;color:inherit">
+                💻 GitHub
+            </a>
+            {% endif %}
+            {% if project.demo_link %}
+            <a href="{{ project.demo_link }}" target="_blank" rel="noopener" class="project-meta-item" style="text-decoration:none;color:inherit">
+                🌐 Live Demo
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Overview -->
+<section class="project-section">
+    <div class="project-section-grid">
+        <div class="project-section-label fade-in-left">
+            <h3>Overview</h3>
+            <div class="label-line"></div>
+        </div>
+        <div class="project-section-content fade-in-right">
+            <p>{{ project.overview }}</p>
+        </div>
+    </div>
+</section>
+
+{% if project.problem_statement %}
+<!-- Problem Statement -->
+<section class="project-section">
+    <div class="project-section-grid">
+        <div class="project-section-label fade-in-left">
+            <h3>The Problem</h3>
+            <div class="label-line"></div>
+        </div>
+        <div class="project-section-content fade-in-right">
+            <p>{{ project.problem_statement }}</p>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if project.features %}
+<!-- Features -->
+<section class="project-section">
+    <div class="project-section-grid">
+        <div class="project-section-label fade-in-left">
+            <h3>Key Features</h3>
+            <div class="label-line"></div>
+        </div>
+        <div class="project-section-content fade-in-right">
+            <div class="project-features-grid stagger-children">
+                {% for feature in project.features %}
+                <div class="feature-item">
+                    <div class="feature-icon">✦</div>
+                    <div class="feature-text">{{ feature }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if project.technologies %}
+<!-- Technologies -->
+<section class="project-section">
+    <div class="project-section-grid">
+        <div class="project-section-label fade-in-left">
+            <h3>Tech Stack</h3>
+            <div class="label-line"></div>
+        </div>
+        <div class="project-section-content fade-in-right">
+            <div class="project-tech-grid stagger-children">
+                {% for tech in project.technologies %}
+                <span class="project-tech-item">{{ tech }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if project.challenges %}
+<!-- Challenges -->
+<section class="project-section">
+    <div class="project-section-grid">
+        <div class="project-section-label fade-in-left">
+            <h3>Challenges</h3>
+            <div class="label-line"></div>
+        </div>
+        <div class="project-section-content fade-in-right">
+            <div class="challenges-list stagger-children">
+                {% for challenge in project.challenges %}
+                <div class="challenge-item">{{ challenge }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if project.architecture %}
+<!-- Architecture -->
+<section class="project-section">
+    <div class="project-section-grid">
+        <div class="project-section-label fade-in-left">
+            <h3>Architecture</h3>
+            <div class="label-line"></div>
+        </div>
+        <div class="project-section-content fade-in-right">
+            <p>{{ project.architecture }}</p>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if screenshots %}
+<!-- Screenshots Gallery -->
+<section class="project-section">
+    <div class="project-section-grid">
+        <div class="project-section-label fade-in-left">
+            <h3>Gallery</h3>
+            <div class="label-line"></div>
+        </div>
+        <div class="project-section-content fade-in-right">
+            <div class="project-features-grid">
+                {% for screenshot in screenshots %}
+                <div class="feature-item" style="padding:0;overflow:hidden;border-radius:var(--radius-md)">
+                    <img src="{{ screenshot.image.url }}" alt="{{ screenshot.caption }}" style="width:100%;height:auto;display:block;">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if project.lessons_learned %}
+<!-- Lessons Learned -->
+<section class="project-section">
+    <div class="project-section-grid">
+        <div class="project-section-label fade-in-left">
+            <h3>Lessons Learned</h3>
+            <div class="label-line"></div>
+        </div>
+        <div class="project-section-content fade-in-right">
+            <p>{{ project.lessons_learned }}</p>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if other_projects %}
+<!-- Related Projects -->
+<section class="related-projects">
+    <div class="container">
+        <div class="section-header fade-in">
+            <span class="section-label">More Projects</span>
+            <h2 class="section-title">Explore Other <span class="gradient-text">Work</span></h2>
+        </div>
+
+        <div class="related-projects-grid stagger-children">
+            {% for proj in other_projects %}
+            <div class="project-card">
+                <div class="project-card-header">
+                    <div class="project-card-accent" style="background: {{ proj.accent_color }}"></div>
+                    <h3 class="project-card-title">{{ proj.title }}</h3>
+                    <div class="project-card-role">👤 {{ proj.role }}</div>
+                </div>
+                <div class="project-card-body">
+                    <p class="project-card-tagline">{{ proj.tagline|truncatewords:15 }}</p>
+                </div>
+                <div class="project-card-footer">
+                    <a href="{% url 'core:project_detail' proj.slug %}" class="project-card-link primary">
+                        View Details →
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/main.js' %}"></script>
+{% endblock %}

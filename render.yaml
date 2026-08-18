@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: gagan-portfolio
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn portfolio.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.8
+      - key: DEBUG
+        value: "False"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com,localhost,127.0.0.1"

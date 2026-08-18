@@ -1,0 +1,541 @@
+{% extends 'base.html' %}
+{% load static portfolio_tags %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/hero.css' %}">
+<link rel="stylesheet" href="{% static 'css/about.css' %}">
+<link rel="stylesheet" href="{% static 'css/skills.css' %}">
+<link rel="stylesheet" href="{% static 'css/experience.css' %}">
+<link rel="stylesheet" href="{% static 'css/projects.css' %}">
+<link rel="stylesheet" href="{% static 'css/certifications.css' %}">
+<link rel="stylesheet" href="{% static 'css/education.css' %}">
+<link rel="stylesheet" href="{% static 'css/github.css' %}">
+<link rel="stylesheet" href="{% static 'css/contact.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- ════════════════════════════════════════════════════════
+     HERO SECTION
+     ════════════════════════════════════════════════════════ -->
+<section class="hero" id="hero">
+    <div class="hero-content">
+        <div class="hero-text">
+            <div class="hero-badge">
+                <span class="status-dot"></span>
+                Available for Opportunities
+            </div>
+
+            {% if profile %}
+            <h1 class="hero-name">
+                <span class="first-name">Gagan</span>
+                <span class="last-name">Sahu</span>
+            </h1>
+
+            <div class="hero-title-wrapper">
+                <div class="hero-title-line"></div>
+                <div class="hero-typing">
+                    <span id="typing-text" data-texts="{{ profile.hero_subtitles }}"></span>
+                    <span class="cursor"></span>
+                </div>
+            </div>
+
+            <p class="hero-description">{{ profile.professional_summary }}</p>
+
+            <div class="hero-actions">
+                <a href="#contact" class="btn btn-primary">
+                    ✉️ Get In Touch
+                </a>
+                <a href="{% url 'core:download_resume' %}" class="btn btn-outline">
+                    📄 Download Resume
+                </a>
+            </div>
+
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="stat-number" data-count="{{ profile.years_experience }}" data-suffix="+">0</div>
+                    <div class="stat-label">Years Experience</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="stat-number" data-count="{{ profile.projects_completed }}" data-suffix="+">0</div>
+                    <div class="stat-label">Projects Built</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="stat-number" data-count="{{ profile.certifications_count }}">0</div>
+                    <div class="stat-label">Certifications</div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="hero-visual">
+            <div class="hero-graphic">
+                <div class="hero-orbit">
+                    <div class="hero-orbit-dot dot-1"></div>
+                </div>
+                <div class="hero-orbit">
+                    <div class="hero-orbit-dot dot-2"></div>
+                </div>
+                <div class="hero-orbit">
+                    <div class="hero-orbit-dot dot-3"></div>
+                </div>
+                <div class="hero-center-icon">⚡</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-scroll">
+        <span>Scroll</span>
+        <div class="scroll-line"></div>
+    </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     ABOUT SECTION
+     ════════════════════════════════════════════════════════ -->
+<section class="section" id="about">
+    <div class="container">
+        <div class="section-header fade-in">
+            <span class="section-label">About Me</span>
+            <h2 class="section-title">The Story Behind <span class="gradient-text">The Code</span></h2>
+            <p class="section-description">A developer who bridges diverse disciplines to build impactful solutions.</p>
+        </div>
+
+        {% if profile %}
+        <div class="about-grid">
+            <div class="about-content fade-in-left">
+                <div class="about-text">
+                    {{ profile.about_me|linebreaks }}
+                </div>
+
+                <div class="about-highlights stagger-children">
+                    <div class="about-highlight-item">
+                        <div class="about-highlight-icon">⚛️</div>
+                        <span class="about-highlight-text">Frontend Development</span>
+                    </div>
+                    <div class="about-highlight-item">
+                        <div class="about-highlight-icon">🐍</div>
+                        <span class="about-highlight-text">Backend Engineering</span>
+                    </div>
+                    <div class="about-highlight-item">
+                        <div class="about-highlight-icon">☁️</div>
+                        <span class="about-highlight-text">Cloud & DevOps</span>
+                    </div>
+                    <div class="about-highlight-item">
+                        <div class="about-highlight-icon">🤖</div>
+                        <span class="about-highlight-text">AI Integration</span>
+                    </div>
+                    <div class="about-highlight-item">
+                        <div class="about-highlight-icon">⚙️</div>
+                        <span class="about-highlight-text">Workflow Automation</span>
+                    </div>
+                    <div class="about-highlight-item">
+                        <div class="about-highlight-icon">🚀</div>
+                        <span class="about-highlight-text">Performance Optimization</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="about-stats-panel fade-in-right">
+                <div class="about-stat-card">
+                    <div class="about-stat-number" data-count="{{ profile.years_experience }}" data-suffix="+">0</div>
+                    <div class="about-stat-label">Years of Professional Experience</div>
+                </div>
+                <div class="about-stat-card">
+                    <div class="about-stat-number" data-count="{{ profile.projects_completed }}" data-suffix="+">0</div>
+                    <div class="about-stat-label">Production Projects Delivered</div>
+                </div>
+                <div class="about-stat-card">
+                    <div class="about-stat-number" data-count="{{ profile.certifications_count }}">0</div>
+                    <div class="about-stat-label">Professional Certifications</div>
+                </div>
+
+                <div class="about-tech-orbit">
+                    <h4>🛠️ Tech Arsenal</h4>
+                    <div class="tech-tags stagger-children">
+                        {% for category, skills in skills_by_category.items %}
+                            {% for skill in skills %}
+                            <span class="tech-tag">{{ skill.name }}</span>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     SKILLS SECTION
+     ════════════════════════════════════════════════════════ -->
+<section class="section" id="skills">
+    <div class="container">
+        <div class="section-header fade-in">
+            <span class="section-label">Technical Skills</span>
+            <h2 class="section-title">My <span class="gradient-text">Technology Stack</span></h2>
+            <p class="section-description">Tools and technologies I use to bring ideas to life.</p>
+        </div>
+
+        <div class="skills-grid">
+            {% for category, skills in skills_by_category.items %}
+            <div class="skill-category fade-in" style="transition-delay: {{ forloop.counter0|floatformat:0 }}00ms">
+                <div class="skill-category-header">
+                    <div class="skill-category-icon">
+                        {% if category == 'Frontend' %}⚛️{% elif category == 'Backend' %}🐍{% elif category == 'Databases' %}🗄️{% elif category == 'Cloud & DevOps' %}☁️{% elif category == 'Enterprise Platforms' %}🏢{% elif category == 'State Management' %}🔄{% else %}💡{% endif %}
+                    </div>
+                    <h3 class="skill-category-name">{{ category }}</h3>
+                    <span class="skill-category-count">{{ skills|length }} skills</span>
+                </div>
+
+                <div class="skills-list stagger-children">
+                    {% for skill in skills %}
+                    <div class="skill-item">
+                        <div class="skill-item-header">
+                            <span class="skill-name">
+                                <span class="skill-color-dot" style="background: {{ skill.color }}"></span>
+                                {{ skill.name }}
+                            </span>
+                            <span class="skill-percentage">{{ skill.proficiency }}%</span>
+                        </div>
+                        <div class="skill-bar-bg">
+                            <div class="skill-bar-fill" data-width="{{ skill.proficiency }}"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     EXPERIENCE SECTION
+     ════════════════════════════════════════════════════════ -->
+<section class="section" id="experience">
+    <div class="container">
+        <div class="section-header fade-in">
+            <span class="section-label">Experience</span>
+            <h2 class="section-title">Professional <span class="gradient-text">Journey</span></h2>
+            <p class="section-description">A timeline of growth, impact, and continuous learning.</p>
+        </div>
+
+        <div class="experience-timeline">
+            {% for exp in experiences %}
+            <div class="timeline-item fade-in" style="transition-delay: {{ forloop.counter0 }}00ms">
+                <div class="timeline-dot"></div>
+                <div class="timeline-connector"></div>
+
+                <div class="timeline-card">
+                    <div class="timeline-duration">
+                        📅 {{ exp.duration_display }}
+                    </div>
+
+                    <h3 class="timeline-role">
+                        {{ exp.title }}
+                        {% if exp.is_current %}
+                        <span class="current-badge"><span class="pulse"></span> Current</span>
+                        {% endif %}
+                    </h3>
+
+                    <div class="timeline-company">🏢 {{ exp.company }}</div>
+                    <div class="timeline-location">📍 {{ exp.location }}</div>
+
+                    <p class="timeline-description">{{ exp.description }}</p>
+
+                    <button class="timeline-expand-btn">
+                        View Details <span class="arrow">▼</span>
+                    </button>
+
+                    <div class="timeline-details">
+                        <div class="timeline-details-inner">
+                            {% if exp.responsibilities %}
+                            <ul class="timeline-responsibilities">
+                                {% for resp in exp.responsibilities %}
+                                <li>{{ resp }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+
+                            {% if exp.technologies %}
+                            <div class="timeline-tech-tags">
+                                {% for tech in exp.technologies %}
+                                <span class="timeline-tech-tag">{{ tech }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     PROJECTS SECTION
+     ════════════════════════════════════════════════════════ -->
+<section class="section" id="projects">
+    <div class="container">
+        <div class="section-header fade-in">
+            <span class="section-label">Featured Projects</span>
+            <h2 class="section-title">Things I've <span class="gradient-text">Built</span></h2>
+            <p class="section-description">Real-world applications solving real problems.</p>
+        </div>
+
+        <div class="projects-grid">
+            {% for project in projects %}
+            <div class="project-card fade-in" style="transition-delay: {{ forloop.counter0 }}50ms">
+                <span class="project-card-number">0{{ forloop.counter }}</span>
+
+                <div class="project-card-header">
+                    <div class="project-card-accent" style="background: {{ project.accent_color }}"></div>
+                    <h3 class="project-card-title">{{ project.title }}</h3>
+                    <div class="project-card-role">👤 {{ project.role }}</div>
+                </div>
+
+                <div class="project-card-body">
+                    <p class="project-card-tagline">{{ project.tagline }}</p>
+
+                    <div class="project-card-tech">
+                        {% for tech in project.technologies %}
+                        <span class="project-tech-badge">{{ tech }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="project-card-footer">
+                    <a href="{% url 'core:project_detail' project.slug %}" class="project-card-link primary">
+                        View Details →
+                    </a>
+                    {% if project.github_link %}
+                    <a href="{{ project.github_link }}" target="_blank" rel="noopener" class="project-card-link secondary">
+                        GitHub
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     CERTIFICATIONS SECTION
+     ════════════════════════════════════════════════════════ -->
+<section class="section" id="certifications">
+    <div class="container">
+        <div class="section-header fade-in">
+            <span class="section-label">Certifications</span>
+            <h2 class="section-title">Validated <span class="gradient-text">Expertise</span></h2>
+            <p class="section-description">Professional certifications that validate my technical proficiency.</p>
+        </div>
+
+        <div class="certifications-grid stagger-children">
+            {% for cert in certifications %}
+            <div class="cert-card">
+                <div class="cert-card-inner">
+                    <div class="cert-icon {{ cert.category }}">
+                        {% if cert.category == 'servicenow' %}🏆{% elif cert.category == 'programming' %}🐍{% else %}📜{% endif %}
+                    </div>
+                    <h3 class="cert-name">{{ cert.name }}</h3>
+                    <div class="cert-issuer">🏛️ {{ cert.issuer }}</div>
+                    <p class="cert-description">{{ cert.description }}</p>
+                    <div class="cert-actions">
+                        {% if cert.verification_url %}
+                        <a href="{{ cert.verification_url }}" target="_blank" rel="noopener" class="cert-verify-btn">
+                            ✓ Verify
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     EDUCATION SECTION
+     ════════════════════════════════════════════════════════ -->
+<section class="section" id="education">
+    <div class="container">
+        <div class="section-header fade-in">
+            <span class="section-label">Education</span>
+            <h2 class="section-title">Academic <span class="gradient-text">Foundation</span></h2>
+            <p class="section-description">The educational journey that shaped my analytical thinking.</p>
+        </div>
+
+        <div class="education-timeline">
+            {% for edu in education %}
+            <div class="edu-item fade-in" style="transition-delay: {{ forloop.counter0 }}50ms">
+                <div class="edu-dot"></div>
+                <div class="edu-card">
+                    <div class="edu-year">🎓 {{ edu.graduation_year }}</div>
+                    <h3 class="edu-degree">{{ edu.degree }}</h3>
+                    <div class="edu-institution">{{ edu.institution }}</div>
+                    {% if edu.gpa %}
+                    <span class="edu-gpa">📊 GPA: {{ edu.gpa }}</span>
+                    {% endif %}
+                    {% if edu.description %}
+                    <p class="edu-description">{{ edu.description }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     GITHUB SECTION
+     ════════════════════════════════════════════════════════ -->
+<section class="section github-section" id="github">
+    <div class="container">
+        <div class="section-header fade-in">
+            <span class="section-label">Open Source</span>
+            <h2 class="section-title">GitHub <span class="gradient-text">Activity</span></h2>
+            <p class="section-description">My open source contributions and coding activity.</p>
+        </div>
+
+        <div id="github-container" data-username="{% if profile and profile.github %}{{ profile.github|cut:'https://github.com/' }}{% endif %}">
+            <div class="github-content">
+                <div class="github-profile-card fade-in">
+                    <div class="github-avatar">👤</div>
+                    <div class="github-profile-info">
+                        <h3>{% if profile %}{{ profile.full_name }}{% endif %}</h3>
+                        <p>Full Stack Web Developer</p>
+                    </div>
+                    <a href="{% if profile and profile.github %}{{ profile.github }}{% else %}#{% endif %}" target="_blank" rel="noopener" class="btn btn-outline github-profile-link">
+                        View Profile
+                    </a>
+                </div>
+
+                <div class="github-stats-grid">
+                    <!-- Populated by JS -->
+                </div>
+
+                <div class="github-repos">
+                    <!-- Populated by JS -->
+                </div>
+
+                <div class="github-languages">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     CONTACT SECTION
+     ════════════════════════════════════════════════════════ -->
+<section class="section" id="contact">
+    <div class="container">
+        <div class="section-header fade-in">
+            <span class="section-label">Get In Touch</span>
+            <h2 class="section-title">Let's Build <span class="gradient-text">Together</span></h2>
+            <p class="section-description">Have a project in mind or want to collaborate? I'd love to hear from you.</p>
+        </div>
+
+        <div class="contact-grid">
+            <div class="contact-info fade-in-left">
+                <div class="contact-info-header">
+                    <h3>Let's Connect</h3>
+                    <p>Whether you're looking for a developer, have a project idea, or just want to say hello — my inbox is always open.</p>
+                </div>
+
+                <div class="contact-cards stagger-children">
+                    {% if profile %}
+                    <a href="mailto:{{ profile.email }}" class="contact-card">
+                        <div class="contact-card-icon email">📧</div>
+                        <div class="contact-card-content">
+                            <h4>Email</h4>
+                            <p>{{ profile.email }}</p>
+                        </div>
+                    </a>
+
+                    {% if profile.linkedin %}
+                    <a href="{{ profile.linkedin }}" target="_blank" rel="noopener" class="contact-card">
+                        <div class="contact-card-icon linkedin">🔗</div>
+                        <div class="contact-card-content">
+                            <h4>LinkedIn</h4>
+                            <p>Connect with me</p>
+                        </div>
+                    </a>
+                    {% endif %}
+
+                    {% if profile.phone %}
+                    <a href="tel:{{ profile.phone }}" class="contact-card">
+                        <div class="contact-card-icon phone">📱</div>
+                        <div class="contact-card-content">
+                            <h4>Phone</h4>
+                            <p>{{ profile.phone }}</p>
+                        </div>
+                    </a>
+                    {% endif %}
+
+                    <a href="{% url 'core:download_resume' %}" class="contact-card">
+                        <div class="contact-card-icon resume">📄</div>
+                        <div class="contact-card-content">
+                            <h4>Resume</h4>
+                            <p>Download my resume</p>
+                        </div>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="contact-form-wrapper fade-in-right">
+                <form id="contact-form" class="contact-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact-name">Name</label>
+                            <input type="text" name="name" id="contact-name" class="form-input" placeholder="Your name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-email">Email</label>
+                            <input type="email" name="email" id="contact-email" class="form-input" placeholder="your@email.com" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-subject">Subject</label>
+                        <input type="text" name="subject" id="contact-subject" class="form-input" placeholder="What's this about?">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-message">Message</label>
+                        <textarea name="message" id="contact-message" class="form-textarea" placeholder="Tell me about your project or idea..." required></textarea>
+                    </div>
+                    <div id="form-status" class="form-status"></div>
+                    <div class="form-submit">
+                        <button type="submit" class="btn btn-primary" style="width: 100%">
+                            ✉️ Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/github.js' %}"></script>
+{% endblock %}

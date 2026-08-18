@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# Django
+*.log
+local_settings.py
+staticfiles/
+.env
+
+# Database (optional to ignore or keep)
+# db.sqlite3
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
